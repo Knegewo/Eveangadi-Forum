@@ -1,8 +1,9 @@
-const pool = requie('../../config/database');
+const pool = require('../../config/database');
+
 
 module.exports = {
     register: (data, callback) => {
-        pool.query(`INSERT TWO registration(user_name, user_email, user_password)VALUES(?,?,?)`,
+        pool.query(`INSERT INTO registration(user_name, user_email, user_password)VALUES(?,?,?)`,
         [
             data.userName,
             data.email,
@@ -15,7 +16,7 @@ module.exports = {
             return callback(null, result);
 
         }
-        )
+        );
     },
 
     profile: (data, callback) => {
@@ -32,10 +33,10 @@ module.exports = {
             return callback(null, result);
         }
         
-        )
+        );
     },
 
-         userById: (id, callback) => {
+    userById: (id, callback) => {
 
         //getting data from registration and profile tables by joining them
         pool.query(`SELECT registration.user_id,user_name,user_email,first_name,last_name FROM registration LEFT JOIN profile ON registration.user_id = profile.user_id WHERE registration.user_id = ?`, [id], (err, result) => {
@@ -64,6 +65,27 @@ module.exports = {
             }
             return callback(null, result);
         })
-    }
+    },
 
+    userById: (id, callback) => {
+
+        //getting data from registration and profile tables by joining them
+        pool.query(`SELECT registration.user_id,user_name,user_email,first_name,last_name FROM registration LEFT JOIN profile ON registration.user_id = profile.user_id WHERE registration.user_id = ?`, [id], (err, result) => {
+            if (err) {
+                return callback(err);
+            }
+            return callback(null, result[0]);
+        })
+    }, 
+
+    getUserByEmail: (email, callback) => {
+
+        //getting the user-info by using email
+        pool.query(`SELECT * FROM registration WHERE user_email = ?`, [email], (err, result) => {
+            if (err) {
+                return callback(err);
+            }
+            return callback(null, result[0]);
+        })
+    }
 }
